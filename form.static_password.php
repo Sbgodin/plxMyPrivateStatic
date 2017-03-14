@@ -7,7 +7,7 @@ $plxPlugin=$plxMotor->plxPlugins->getInstance('plxMyPrivateStatic');
 $error=false;
 
 if(!empty($_POST)) {
-	if($plxMotor->aStats[$_POST['id']]['password']!=sha1($_POST['password']))
+	if(!password_verify($_POST['password'], $plxMotor->aStats[$_POST['id']]['password']))
 		$error = $plxPlugin->getLang('L_INVALID_PASSWORD');
 	else {
 		$_SESSION['password_statics'][$_POST['id']]=true;
