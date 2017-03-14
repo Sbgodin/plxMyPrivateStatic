@@ -10,7 +10,7 @@ if(!empty($_POST)) {
 	if(!password_verify($_POST['password'], $plxMotor->aStats[$_POST['id']]['password']))
 		$error = $plxPlugin->getLang('L_INVALID_PASSWORD');
 	else {
-		$_SESSION['password_statics'][$_POST['id']]=true;
+		$_SESSION['password_statics'][$_POST['id']]=$plxMotor->aStats[$_POST['id']]['token'];
 		header('Location: '.$plxMotor->urlRewrite('?static'.intval($_POST['id']).'/'.$plxMotor->aStats[$_POST['id']]['url']));
 		exit;
 	}

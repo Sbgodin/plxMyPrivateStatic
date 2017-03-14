@@ -94,6 +94,7 @@ class plxMyPrivateStatic extends plxPlugin {
 		echo '<?php
 			$this->aStats[$static_id]["protect"] = (isset($this->aStats[$static_id]["protect"])?$this->aStats[$static_id]["protect"]:0);
 			$this->aStats[$static_id]["password"] = (isset($this->aStats[$static_id]["password"])?$this->aStats[$static_id]["password"]:"");
+			$this->aStats[$static_id]["token"] = (isset($this->aStats[$static_id]["token"])?$this->aStats[$static_id]["token"]:"");
 		?>';
     }
 
@@ -107,6 +108,7 @@ class plxMyPrivateStatic extends plxPlugin {
 		echo '<?php
 			$xml .= "<protect>".intval($static["protect"])."</protect>";
 			$xml .= "<password><![CDATA[".plxUtils::cdataCheck($static["password"])."]]></password>";
+			$xml .= "<token><![CDATA[".plxUtils::cdataCheck($static["token"])."]]></token>";
 		?>';
     }
 
@@ -119,7 +121,10 @@ class plxMyPrivateStatic extends plxPlugin {
     public function plxAdminEditStatique() {
 		echo '<?php
 			$this->aStats[$content["id"]]["protect"] = (isset($content["protect"]) ? intval($content["protect"]) : 0);
-			if (!empty($content["password"])) $this->aStats[$content["id"]]["password"] = password_hash($content["password"], PASSWORD_BCRYPT);
+			if (!empty($content["password"])) {
+				$this->aStats[$content["id"]]["password"] = password_hash($content["password"], PASSWORD_BCRYPT);
+				$this->aStats[$content["id"]]["token"] = hash("sha256", uniqid());
+			}
 			if(!empty($content["chapo"]))
 				plxUtils::write($content["chapo"], PLX_ROOT.$this->aConf["racine_statiques"].$content["id"].".plxMyPrivateStatic.php");
 		?>';
@@ -137,6 +142,8 @@ class plxMyPrivateStatic extends plxPlugin {
 			$this->aStats[$number]["protect"]=plxUtils::getValue($values[$protect]["value"]);
 			$password = plxUtils::getValue($iTags["password"][$i]);
 			$this->aStats[$number]["password"]=plxUtils::getValue($values[$password]["value"]);
+			$token = plxUtils::getValue($iTags["token"][$i]);
+			$this->aStats[$number]["token"]=plxUtils::getValue($values[$token]["value"]);
 		?>';
 	}
 
@@ -210,7 +217,9 @@ class plxMyPrivateStatic extends plxPlugin {
 			if(\$protect==1) {
 				\$password = plxUtils::getValue(\$this->aStats[\$this->cible]['password']);
 				if(\$password!='') {
-					if(!isset(\$_SESSION['password_statics'][\$this->cible])) {
+					\$tokenStatic = plxUtils::getValue(\$this->aStats[\$this->cible]['token']);
+					\$tokenUser = plxUtils::getValue(\$_SESSION['password_statics'][\$this->cible]);
+					if(empty(\$tokenStatic) || \$tokenUser != \$tokenStatic) {
 						\$this->idStat = \$this->cible;
 						\$this->cible = '../../'.PLX_PLUGINS.'plxMyPrivateStatic/form';
 						\$this->mode = 'static_password';
