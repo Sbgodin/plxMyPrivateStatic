@@ -119,7 +119,7 @@ class plxMyPrivateStatic extends plxPlugin {
     public function plxAdminEditStatique() {
 		echo '<?php
 			$this->aStats[$content["id"]]["protect"] = (isset($content["protect"]) ? intval($content["protect"]) : 0);
-			$this->aStats[$content["id"]]["password"] = (!empty($content["password"]) AND $this->aStats[$content["id"]]["protect"]) ? sha1($content["password"]) : "";
+			if (!empty($content["password"])) $this->aStats[$content["id"]]["password"] = sha1($content["password"]);
 			if(!empty($content["chapo"]))
 				plxUtils::write($content["chapo"], PLX_ROOT.$this->aConf["racine_statiques"].$content["id"].".plxMyPrivateStatic.php");
 		?>';
