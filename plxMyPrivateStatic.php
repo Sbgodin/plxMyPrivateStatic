@@ -57,7 +57,7 @@ class plxMyPrivateStatic extends plxPlugin {
 				<p><label for="id_protect">'.$this->getLang('L_FORM_PROTECT').'&nbsp;:</label></p>
 				<?php plxUtils::printSelect("protect",array("1"=>L_YES,"0"=>L_NO),$protect); ?>
 				<p><label for="id_password">'.$this->getLang('L_FORM_PASSWORD').'&nbsp;:</label></p>
-				<input type="password" id="id_password" name="password" value="" size="20" maxlength="25" />
+				<input type="text" autocomplete="off" id="id_password" name="password" value="" size="20" maxlength="25" />
 				<?php if($password!="" AND $protect) echo $image; ?>
 				<p><label for="id_chapo">'.$this->getLang('L_FORM_PUBLIC_CONTENT').'&nbsp;:</label></p>
 				<?php plxUtils::printArea("chapo",plxUtils::strCheck($chapo),35,10); ?>
